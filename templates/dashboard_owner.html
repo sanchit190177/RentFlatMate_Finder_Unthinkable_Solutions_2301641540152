@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — RentMate{% endblock %}
+{% block content %}
+<div class="flex-between section-gap">
+  <div>
+    <div class="eyebrow">Owner dashboard</div>
+    <h2 class="mb-0">Hi, {{ current_user.name }}</h2>
+  </div>
+  <a href="{{ url_for('listings.new_listing') }}" class="btn btn-primary">Post a room</a>
+</div>
+
+{% if pending_interests %}
+<section class="section-gap">
+  <h3>Pending interest requests</h3>
+  <div class="grid grid-2">
+    {% for i in pending_interests %}
+    <div class="card">
+      <div class="score-row section-gap" style="margin-bottom:14px;">
+        <div class="key-dial" style="--pct: {{ i.compatibility_score }};"><span class="key-dial-value">{{ i.compatibility_score }}</span></div>
+        <div>
+          <strong>{{ i.tenant.name }}</strong> on <strong>{{ i.listing.location }}</strong>
+          <div class="score-explain">{{ i.compatibility_explanation }}</div>
+          <div class="score-source">{{ i.score_source }} score</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <form method="POST" action="{{ url_for('interests.accept_interest', interest_id=i.id) }}">
+          <button class="btn btn-primary btn-sm" type="submit">Accept</button>
+        </form>
+        <form method="POST" action="{{ url_for('interests.decline_interest', interest_id=i.id) }}">
+          <button class="btn btn-danger btn-sm" type="submit">Decline</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section>
+  <h3>Your listings</h3>
+  {% if listings %}
+  <div class="grid grid-3">
+    {% for listing in listings %}
+    <div class="listing-card">
+      <div class="listing-photo" style="{% if listing.photo_url %}background-image:url('{{ listing.photo_url }}');{% endif %}">
+        {% if not listing.photo_url %}No photo{% endif %}
+      </div>
+      <div class="listing-body">
+        <div class="flex-between">
+          <div class="listing-location">{{ listing.location }}</div>
+          {% if listing.is_filled %}<span class="pill pill-accepted">Filled</span>{% endif %}
+        </div>
+        <div class="rent">₹{{ listing.rent }}<span class="muted">/mo</span></div>
+        <div class="listing-meta">
+          <span class="tag">{{ listing.room_type }}</span>
+          <span class="tag">{{ listing.furnishing_status }}</span>
+        </div>
+        {% if not listing.is_filled %}
+        <form method="POST" action="{{ url_for('listings.mark_filled', listing_id=listing.id) }}" style="margin-top:auto;">
+          <button class="btn btn-ghost btn-sm btn-block" type="submit">Mark as filled</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">You haven't posted any rooms yet.</div>
+  {% endif %}
+</section>
+
+<section class="section-gap" style="margin-top:40px;">
+  <h3>Accepted conversations</h3>
+  {% set accepted = [] %}
+  {% for listing in listings %}
+    {% for i in listing.interests %}
+      {% if i.status == 'accepted' %}{% set _ = accepted.append(i) %}{% endif %}
+    {% endfor %}
+  {% endfor %}
+  {% if accepted %}
+  <div class="grid grid-2">
+    {% for i in accepted %}
+    <a class="card" href="{{ url_for('chat.chat_room', interest_id=i.id) }}">
+      <strong>{{ i.tenant.name }}</strong> — {{ i.listing.location }}
+      <div class="muted">Open chat &rarr;</div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">No accepted conversations yet.</div>
+  {% endif %}
+</section>
+{% endblock %}

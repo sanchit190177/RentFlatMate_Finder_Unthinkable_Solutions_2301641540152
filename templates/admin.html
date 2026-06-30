@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Admin — RentMate{% endblock %}
+{% block content %}
+<div class="eyebrow">Admin</div>
+<h2>Platform activity</h2>
+
+<section class="section-gap">
+  <h3>Users ({{ users|length }})</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+      <tbody>
+        {% for u in users %}
+        <tr><td>{{ u.name }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td>{{ u.created_at.strftime('%d %b %Y') }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section-gap">
+  <h3>Listings ({{ listings|length }})</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>Location</th><th>Owner</th><th>Rent</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for l in listings %}
+        <tr><td>{{ l.location }}</td><td>{{ l.owner.name }}</td><td>₹{{ l.rent }}</td>
+            <td>{{ 'Filled' if l.is_filled else 'Active' }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h3>Recent interests ({{ interests|length }})</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>Tenant</th><th>Listing</th><th>Score</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for i in interests %}
+        <tr><td>{{ i.tenant.name }}</td><td>{{ i.listing.location }}</td>
+            <td>{{ i.compatibility_score }} ({{ i.score_source }})</td>
+            <td><span class="pill pill-{{ i.status }}">{{ i.status }}</span></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

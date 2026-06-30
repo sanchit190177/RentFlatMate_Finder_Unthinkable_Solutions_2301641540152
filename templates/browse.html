@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Browse rooms — RentMate{% endblock %}
+{% block content %}
+<div class="eyebrow">Ranked for you</div>
+<h2>Browse rooms</h2>
+
+<form method="GET" class="card section-gap" style="display:flex;gap:14px;align-items:end;flex-wrap:wrap;">
+  <div class="field" style="flex:1;min-width:180px;margin:0;">
+    <label for="location">Location</label>
+    <input type="text" id="location" name="location" value="{{ location }}" placeholder="Filter by location">
+  </div>
+  <div class="field" style="flex:1;min-width:140px;margin:0;">
+    <label for="max_budget">Max rent</label>
+    <input type="number" id="max_budget" name="max_budget" value="{{ max_budget or '' }}" placeholder="No limit">
+  </div>
+  <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+{% if scored %}
+<div class="grid grid-2">
+  {% for score, listing in scored %}
+  <div class="listing-card">
+    <div class="listing-photo" style="{% if listing.photo_url %}background-image:url('{{ listing.photo_url }}');{% endif %}">
+      {% if not listing.photo_url %}No photo{% endif %}
+    </div>
+    <div class="listing-body">
+      <div class="flex-between">
+        <div class="listing-location">{{ listing.location }}</div>
+        <div class="key-dial" style="--pct: {{ score }};width:48px;height:48px;"><span class="key-dial-value" style="font-size:0.85rem;">{{ score }}</span></div>
+      </div>
+      <div class="rent">₹{{ listing.rent }}<span class="muted">/mo</span></div>
+      <div class="listing-meta">
+        <span class="tag">{{ listing.room_type }}</span>
+        <span class="tag">{{ listing.furnishing_status }}</span>
+        <span class="tag">From {{ listing.available_from }}</span>
+      </div>
+      {% if listing.description %}<p class="muted">{{ listing.description }}</p>{% endif %}
+      {% if listing.id in already_interested_ids %}
+        <span class="pill pill-pending" style="align-self:flex-start;">Interest sent</span>
+      {% else %}
+        <form method="POST" action="{{ url_for('interests.express_interest', listing_id=listing.id) }}">
+          <button type="submit" class="btn btn-primary btn-sm btn-block">Express interest</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty">No listings match your filters yet.</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}RentMate — find the right room, the right flatmate{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="eyebrow">Room &amp; flatmate matching</div>
+  <h1>Renting a room is more than<br>a price tag.</h1>
+  <p class="lead">RentMate scores compatibility between what tenants need and what owners
+    offer — location, budget, move-in timing — so you only talk to people worth talking to.</p>
+  <div class="hero-actions">
+    <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Get started</a>
+    <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">I have an account</a>
+  </div>
+</section>
+
+<section class="section-gap">
+  <div class="flex-between section-gap">
+    <h2 class="mb-0">Recently listed</h2>
+  </div>
+  {% if recent %}
+  <div class="grid grid-3">
+    {% for listing in recent %}
+    <div class="listing-card">
+      <div class="listing-photo" style="{% if listing.photo_url %}background-image:url('{{ listing.photo_url }}');{% endif %}">
+        {% if not listing.photo_url %}No photo{% endif %}
+      </div>
+      <div class="listing-body">
+        <div class="listing-location">{{ listing.location }}</div>
+        <div class="rent">₹{{ listing.rent }}<span class="muted">/mo</span></div>
+        <div class="listing-meta">
+          <span class="tag">{{ listing.room_type }}</span>
+          <span class="tag">{{ listing.furnishing_status }}</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">No listings yet — be the first to post one.</div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — RentMate{% endblock %}
+{% block content %}
+<div class="flex-between section-gap">
+  <div>
+    <div class="eyebrow">Tenant dashboard</div>
+    <h2 class="mb-0">Hi, {{ current_user.name }}</h2>
+  </div>
+  <div style="display:flex;gap:10px;">
+    <a href="{{ url_for('listings.profile') }}" class="btn btn-ghost">{{ 'Edit profile' if profile else 'Complete profile' }}</a>
+    <a href="{{ url_for('listings.browse') }}" class="btn btn-primary">Browse rooms</a>
+  </div>
+</div>
+
+{% if not profile %}
+<div class="card section-gap">
+  <p class="mb-0">Add your preferred location and budget so we can rank listings and compute compatibility scores for you.</p>
+</div>
+{% endif %}
+
+<section>
+  <h3>Your interest requests</h3>
+  {% if my_interests %}
+  <div class="grid grid-2">
+    {% for i in my_interests %}
+    <div class="card">
+      <div class="flex-between" style="margin-bottom:14px;">
+        <strong>{{ i.listing.location }}</strong>
+        <span class="pill pill-{{ i.status }}">{{ i.status }}</span>
+      </div>
+      <div class="score-row">
+        <div class="key-dial" style="--pct: {{ i.compatibility_score }};"><span class="key-dial-value">{{ i.compatibility_score }}</span></div>
+        <div class="score-explain">{{ i.compatibility_explanation }}</div>
+      </div>
+      {% if i.status == 'accepted' %}
+      <a href="{{ url_for('chat.chat_room', interest_id=i.id) }}" class="btn btn-ghost btn-sm" style="margin-top:14px;">Open chat</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">You haven't expressed interest in any rooms yet.</div>
+  {% endif %}
+</section>
+{% endblock %}

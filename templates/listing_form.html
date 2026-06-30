@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Post a room — RentMate{% endblock %}
+{% block content %}
+<div style="max-width:560px;margin:0 auto;">
+  <div class="eyebrow">New listing</div>
+  <h2>Post a room</h2>
+  <form method="POST" class="card">
+    <div class="field">
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" placeholder="e.g. Koramangala, Bangalore" required>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="rent">Rent (₹/month)</label>
+        <input type="number" id="rent" name="rent" min="0" required>
+      </div>
+      <div class="field">
+        <label for="available_from">Available from</label>
+        <input type="date" id="available_from" name="available_from" required>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="room_type">Room type</label>
+        <select id="room_type" name="room_type" required>
+          <option value="Single">Single</option>
+          <option value="Shared">Shared</option>
+          <option value="1BHK">1BHK</option>
+          <option value="2BHK">2BHK</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="furnishing_status">Furnishing</label>
+        <select id="furnishing_status" name="furnishing_status" required>
+          <option value="Furnished">Furnished</option>
+          <option value="Semi-furnished">Semi-furnished</option>
+          <option value="Unfurnished">Unfurnished</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="photo_url">Photo URL (optional)</label>
+      <input type="url" id="photo_url" name="photo_url" placeholder="https://...">
+    </div>
+    <div class="field">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" placeholder="Anything tenants should know"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Post listing</button>
+  </form>
+</div>
+{% endblock %}
